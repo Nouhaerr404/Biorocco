@@ -1,0 +1,168 @@
+﻿CREATE TABLE Users (
+    UserId INT IDENTITY PRIMARY KEY,
+    FullName NVARCHAR(150),
+    Email NVARCHAR(150) UNIQUE,
+    Phone NVARCHAR(20),
+    PasswordHash NVARCHAR(MAX),
+    Role NVARCHAR(20),
+    IsActive BIT DEFAULT 1,
+    CreatedAt DATETIME DEFAULT GETDATE()
+);
+
+CREATE TABLE Addresses (
+    AddressId INT IDENTITY PRIMARY KEY,
+    UserId INT,
+    FullName NVARCHAR(150),
+    Phone NVARCHAR(20),
+    City NVARCHAR(100),
+    AddressLine NVARCHAR(255),
+    PostalCode NVARCHAR(20),
+    IsDefault BIT DEFAULT 0,
+    FOREIGN KEY (UserId) REFERENCES Users(UserId)
+);
+
+CREATE TABLE Categories (
+    CategoryId INT IDENTITY PRIMARY KEY,
+    Name NVARCHAR(100),
+    Description NVARCHAR(255)
+);
+
+
+CREATE TABLE Products (
+    ProductId INT IDENTITY PRIMARY KEY,
+    CategoryId INT,
+    Name NVARCHAR(150),
+    Description NVARCHAR(MAX),
+    Ingredients NVARCHAR(MAX),
+    Usage NVARCHAR(MAX),
+    IsOrganic BIT DEFAULT 0,
+    BasePrice DECIMAL(10,2),
+    CreatedAt DATETIME DEFAULT GETDATE(),
+    IsActive BIT DEFAULT 1,
+    FOREIGN KEY (CategoryId) REFERENCES Categories(CategoryId)
+);
+
+CREATE TABLE ProductFormats (
+    FormatId INT IDENTITY PRIMARY KEY,
+    ProductId INT,
+    Label NVARCHAR(50),
+    Price DECIMAL(10,2),
+    Stock INT DEFAULT 0,
+    StockMin INT DEFAULT 0,
+    ExpirationDate DATE NULL,
+    ExpirationAlertDays INT DEFAULT 30,
+    FOREIGN KEY (ProductId) REFERENCES Products(ProductId)
+);
+
+CREATE TABLE ProductImages (
+    ImageId INT IDENTITY PRIMARY KEY,
+    ProductId INT,
+    ImageUrl NVARCHAR(255),
+    IsMain BIT DEFAULT 0,
+    FOREIGN KEY (ProductId) REFERENCES Products(ProductId)
+);
+
+CREATE TABLE Reviews (
+    ReviewId INT IDENTITY PRIMARY KEY,
+    ProductId INT,
+    UserId INT,
+    Rating INT,
+    Comment NVARCHAR(MAX),
+    CreatedAt DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (ProductId) REFERENCES Products(ProductId),
+    FOREIGN KEY (UserId) REFERENCES Users(UserId)
+);
+
+
+CREATE TABLE Cart (
+    CartId INT IDENTITY PRIMARY KEY,
+    UserId INT,
+    CreatedAt DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (UserId) REFERENCES Users(UserId)
+);
+
+
+CREATE TABLE CartItems (
+    CartItemId INT IDENTITY PRIMARY KEY,
+    CartId INT,
+    ProductId INT,
+    FormatId INT,
+    Quantity INT,
+    UnitPrice DECIMAL(10,2),
+    FOREIGN KEY (CartId) REFERENCES Cart(CartId),
+    FOREIGN KEY (ProductId) REFERENCES Products(ProductId),
+    FOREIGN KEY (FormatId) REFERENCES ProductFormats(FormatId)
+);
+
+
+CREATE TABLE ShippingMethods (
+    ShippingId INT IDENTITY PRIMARY KEY,
+    MethodName NVARCHAR(100),
+    Price DECIMAL(10,2),
+    EstimatedDays INT
+);
+
+CREATE TABLE Orders (
+    OrderId INT IDENTITY PRIMARY KEY,
+    UserId INT,
+    AddressId INT,
+    ShippingId INT, -- correction ici !
+    Status NVARCHAR(50),
+    TotalHT DECIMAL(10,2),
+    TotalTTC DECIMAL(10,2),
+    DeliveryFee DECIMAL(10,2),
+    PaymentMethod NVARCHAR(50),
+    TrackingNumber NVARCHAR(100) NULL,
+    CancellationReason NVARCHAR(MAX) NULL,
+    CancelledAt DATETIME NULL,
+    CreatedAt DATETIME DEFAULT GETDATE(),
+    ValidatedAt DATETIME NULL,
+    InPreparationAt DATETIME NULL,
+    ShippedAt DATETIME NULL,
+    DeliveredAt DATETIME NULL,
+    FOREIGN KEY (UserId) REFERENCES Users(UserId),
+    FOREIGN KEY (AddressId) REFERENCES Addresses(AddressId),
+    FOREIGN KEY (ShippingId) REFERENCES ShippingMethods(ShippingId)
+);
+
+
+CREATE TABLE OrderItems (
+    OrderItemId INT IDENTITY PRIMARY KEY,
+    OrderId INT,
+    ProductId INT,
+    FormatId INT,
+    Quantity INT,
+    UnitPrice DECIMAL(10,2),
+    FOREIGN KEY (OrderId) REFERENCES Orders(OrderId),
+    FOREIGN KEY (ProductId) REFERENCES Products(ProductId),
+    FOREIGN KEY (FormatId) REFERENCES ProductFormats(FormatId)
+);
+
+
+CREATE TABLE PasswordResetTokens (
+    TokenId INT IDENTITY PRIMARY KEY,
+    UserId INT,
+    Token NVARCHAR(255),
+    ExpiresAt DATETIME,
+    FOREIGN KEY (UserId) REFERENCES Users(UserId)
+);
+
+CREATE TABLE Demandes (
+    DemandeId INT IDENTITY PRIMARY KEY,
+    UserId INT,
+    ReferenceNumber NVARCHAR(50) UNIQUE,
+    Type NVARCHAR(50),
+    Content NVARCHAR(MAX),
+    Status NVARCHAR(50) DEFAULT 'En attente',
+    AdminResponse NVARCHAR(MAX) NULL,
+    CreatedAt DATETIME DEFAULT GETDATE(),
+    UpdatedAt DATETIME NULL,
+    FOREIGN KEY (UserId) REFERENCES Users(UserId)
+);
+
+--Admin123
+
+UPDATE Users 
+SET PasswordHash = '4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a'
+WHERE Email = 'admin@cooperative.com'
+

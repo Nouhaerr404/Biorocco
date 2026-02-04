@@ -1,0 +1,157 @@
+===========================================
+DONNÉES DE TEST POUR L'AJOUT DE PRODUITS
+===========================================
+
+PRODUIT 1 - Huile d'Olive Bio
+-----------------------------
+Nom: Huile d'Olive Extra Vierge Bio
+Catégorie: (laisser vide ou sélectionner une catégorie si disponible)
+Description: Huile d'olive extra vierge issue de l'agriculture biologique, pressée à froid. Riche en antioxydants et en acides gras mono-insaturés.
+Ingrédients: 100% olives biologiques
+Utilisation: Pour assaisonnement, cuisson douce, vinaigrettes
+Prix de base: 12.50
+Bio: ✓ (coché)
+Actif: ✓ (coché)
+
+Images:
+- https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400
+- https://images.unsplash.com/photo-1603561596112-0a13230a555e?w=400
+
+Formats:
+1. Format: 250ml | Prix: 12.50 | Stock: 50 | Stock Min: 10 | Date expiration: (laisser vide)
+2. Format: 500ml | Prix: 22.00 | Stock: 30 | Stock Min: 5 | Date expiration: (laisser vide)
+3. Format: 1L | Prix: 40.00 | Stock: 20 | Stock Min: 5 | Date expiration: (laisser vide)
+
+
+PRODUIT 2 - Miel de Thym
+------------------------
+Nom: Miel de Thym Artisanal
+Catégorie: (laisser vide)
+Description: Miel pur de thym récolté dans les montagnes, non pasteurisé. Goût intense et propriétés antiseptiques.
+Ingrédients: 100% miel de thym
+Utilisation: Pour sucrer vos boissons chaudes, sur du pain, en cuisine
+Prix de base: 8.00
+Bio: ✓ (coché)
+Actif: ✓ (coché)
+
+Images:
+- https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=400
+
+Formats:
+1. Format: 250g | Prix: 8.00 | Stock: 100 | Stock Min: 20 | Date expiration: (laisser vide)
+2. Format: 500g | Prix: 14.00 | Stock: 60 | Stock Min: 15 | Date expiration: (laisser vide)
+3. Format: 1kg | Prix: 25.00 | Stock: 40 | Stock Min: 10 | Date expiration: (laisser vide)
+
+
+PRODUIT 3 - Amandes
+-------------------
+Nom: Amandes Décortiquées Bio
+Catégorie: (laisser vide)
+Description: Amandes décortiquées issues de l'agriculture biologique. Source de protéines végétales et de vitamine E.
+Ingrédients: 100% amandes biologiques
+Utilisation: En collation, dans les salades, pour la pâtisserie
+Prix de base: 15.00
+Bio: ✓ (coché)
+Actif: ✓ (coché)
+
+Images:
+- https://images.unsplash.com/photo-1599599810769-bcde5a160d32?w=400
+
+Formats:
+1. Format: 250g | Prix: 15.00 | Stock: 80 | Stock Min: 20 | Date expiration: (laisser vide)
+2. Format: 500g | Prix: 28.00 | Stock: 50 | Stock Min: 15 | Date expiration: (laisser vide)
+3. Format: 1kg | Prix: 52.00 | Stock: 30 | Stock Min: 10 | Date expiration: (laisser vide)
+
+
+PRODUIT 4 - Savon Artisanal
+---------------------------
+Nom: Savon à l'Huile d'Olive et Miel
+Catégorie: (laisser vide)
+Description: Savon artisanal fabriqué à froid avec de l'huile d'olive et du miel. Doux pour la peau, hydratant naturel.
+Ingrédients: Huile d'olive, miel, soude, eau
+Utilisation: Pour le corps et le visage, quotidien
+Prix de base: 6.50
+Bio: ✓ (coché)
+Actif: ✓ (coché)
+
+Images:
+- https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400
+
+Formats:
+1. Format: 100g | Prix: 6.50 | Stock: 120 | Stock Min: 30 | Date expiration: (laisser vide)
+2. Format: 200g | Prix: 11.00 | Stock: 80 | Stock Min: 20 | Date expiration: (laisser vide)
+
+
+PRODUIT 5 - Dattes
+-----------------
+Nom: Dattes Medjool Premium
+Catégorie: (laisser vide)
+Description: Dattes Medjool de qualité premium, charnues et sucrées. Source naturelle d'énergie.
+Ingrédients: 100% dattes Medjool
+Utilisation: En collation, dans les desserts, pour sucrer naturellement
+Prix de base: 9.50
+Bio: ✓ (coché)
+Actif: ✓ (coché)
+
+Images:
+- https://images.unsplash.com/photo-1606312619070-d48b4b6c3a3a?w=400
+
+Formats:
+1. Format: 250g | Prix: 9.50 | Stock: 90 | Stock Min: 25 | Date expiration: (laisser vide)
+2. Format: 500g | Prix: 17.00 | Stock: 55 | Stock Min: 15 | Date expiration: (laisser vide)
+3. Format: 1kg | Prix: 32.00 | Stock: 35 | Stock Min: 10 | Date expiration: (laisser vide)
+
+
+PRODUIT 6 - Test Simple (Sans images ni formats)
+-----------------------------------------------
+Nom: Produit Test Simple
+Catégorie: (laisser vide)
+Description: (laisser vide)
+Ingrédients: (laisser vide)
+Utilisation: (laisser vide)
+Prix de base: 10.00
+Bio: (non coché)
+Actif: ✓ (coché)
+
+Images: (ne rien ajouter)
+Formats: (ne rien ajouter)
+
+
+===========================================
+INSTRUCTIONS DE TEST
+===========================================
+
+1. TEST BASIQUE (Produit 6):
+   - Cliquez sur "Nouveau Produit"
+   - Remplissez uniquement: Nom = "Produit Test Simple" et Prix = 10.00
+   - Cliquez sur "Enregistrer"
+   - Vérifiez que le produit apparaît dans la liste
+
+2. TEST COMPLET (Produit 1):
+   - Cliquez sur "Nouveau Produit"
+   - Remplissez tous les champs avec les données du Produit 1
+   - Ajoutez les images (cliquez sur "Ajouter Image" pour chaque URL)
+   - Ajoutez les formats (cliquez sur "+ Ajouter Format" pour chaque format)
+   - Cliquez sur "Enregistrer"
+   - Vérifiez que tout est sauvegardé
+
+3. TEST DE MODIFICATION:
+   - Cliquez sur "Modifier" sur un produit existant
+   - Modifiez le nom ou le prix
+   - Cliquez sur "Enregistrer"
+   - Vérifiez que les modifications sont sauvegardées
+
+4. VÉRIFICATION:
+   - Ouvrez la console (F12) pour voir les logs
+   - Vérifiez Visual Studio > Output > Debug pour les logs serveur
+   - Vérifiez la base de données pour confirmer l'insertion
+
+===========================================
+NOTES IMPORTANTES
+===========================================
+
+- Les URLs d'images sont des exemples (Unsplash). Vous pouvez les utiliser ou les remplacer.
+- Les dates d'expiration peuvent être laissées vides pour les tests.
+- Si une catégorie existe dans votre base, vous pouvez la sélectionner.
+- Le "Prix de base" est le prix de référence, les formats peuvent avoir des prix différents.
+

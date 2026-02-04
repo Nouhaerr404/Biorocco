@@ -1,0 +1,536 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="Multi_cooperative.SiteMaster" %>
+
+<!DOCTYPE html>
+
+<html lang="fr">
+<head runat="server">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%: Page.Title %> - Mon ASP.NET Application</title>
+
+    <asp:PlaceHolder runat="server">
+        <%: Scripts.Render("~/bundles/modernizr") %>
+    </asp:PlaceHolder>
+
+    <webopt:bundlereference runat="server" path="~/Content/css" />
+    <link href="Content/index.css" rel="stylesheet" type="text/css" />
+    <link href="Content/globals.css" rel="stylesheet" type="text/css" />
+    <link href="Content/premium-ux.css" rel="stylesheet" type="text/css" />
+    <link href="favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <style>
+        /* ============================================
+           🤖 Chatbot Widget - Floating Assistant Styles (INLINE)
+           ============================================ */
+        
+        /* Toggle Button (Icône flottante) */
+        #chatbot-toggle {
+            position: fixed !important;
+            bottom: 30px !important;
+            right: 100px !important;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2147483647 !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            outline: none;
+        }
+
+        #chatbot-toggle:hover {
+            transform: scale(1.1) translateY(-2px);
+            box-shadow: 0 12px 32px rgba(102, 126, 234, 0.5);
+        }
+
+        #chatbot-toggle.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.8);
+        }
+
+        #chatbot-toggle i {
+            font-size: 28px;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Fenêtre de Chat */
+        #chatbot-window {
+            position: fixed !important;
+            bottom: 100px !important;
+            right: 100px !important;
+            width: 380px;
+            height: 550px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            z-index: 2147483647 !important;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        #chatbot-window.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: all;
+        }
+
+        #chatbot-window.minimized {
+            height: 60px;
+        }
+
+        /* En-tête du Chat */
+        #chatbot-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 16px 16px 0 0;
+            flex-shrink: 0;
+        }
+
+        #chatbot-header-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        #chatbot-header-avatar {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        #chatbot-header-text h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        #chatbot-header-text p {
+            margin: 0;
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        #chatbot-header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        #chatbot-header-actions button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        #chatbot-header-actions button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        /* Corps du Chat */
+        #chatbot-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* Messages */
+        .chatbot-message {
+            display: flex;
+            gap: 12px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 16px;
+        }
+
+        .bot-message .message-avatar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .user-message .message-avatar {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            word-wrap: break-word;
+        }
+
+        .bot-message .message-content {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px 12px 12px 4px;
+        }
+
+        .user-message {
+            flex-direction: row-reverse;
+        }
+
+        .user-message .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px 12px 4px 12px;
+        }
+
+        .message-content p {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Pied de page (Input) */
+        #chatbot-footer {
+            padding: 16px 20px;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            flex-shrink: 0;
+        }
+
+        #chatbot-input-container {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        #chatbot-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 24px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        #chatbot-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        #chatbot-send {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        #chatbot-send:hover {
+            transform: scale(1.05);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            #chatbot-window {
+                width: calc(100vw - 40px);
+                height: calc(100vh - 100px);
+                bottom: 20px !important;
+                right: 20px !important;
+            }
+            #chatbot-toggle {
+                bottom: 20px !important;
+                right: 90px !important;
+            }
+        }
+    </style>
+
+    <!-- Head ContentPlaceHolder accessible par les pages -->
+    <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
+</head>
+<body>
+    <form runat="server">
+        <asp:ScriptManager runat="server">
+            <Scripts>
+                <%-- Framework Scripts --%>
+                <asp:ScriptReference Name="MsAjaxBundle" />
+                <asp:ScriptReference Name="jquery" />
+                <asp:ScriptReference Name="WebForms.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebForms.js" />
+                <asp:ScriptReference Name="WebUIValidation.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebUIValidation.js" />
+                <asp:ScriptReference Name="MenuStandards.js" Assembly="System.Web" Path="~/Scripts/WebForms/MenuStandards.js" />
+                <asp:ScriptReference Name="GridView.js" Assembly="System.Web" Path="~/Scripts/WebForms/GridView.js" />
+                <asp:ScriptReference Name="DetailsView.js" Assembly="System.Web" Path="~/Scripts/WebForms/DetailsView.js" />
+                <asp:ScriptReference Name="TreeView.js" Assembly="System.Web" Path="~/Scripts/WebForms/TreeView.js" />
+                <asp:ScriptReference Name="WebParts.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebParts.js" />
+                <asp:ScriptReference Name="Focus.js" Assembly="System.Web" Path="~/Scripts/WebForms/Focus.js" />
+                <asp:ScriptReference Name="WebFormsBundle" />
+
+                <%-- NOTE: Le script admin-dashboard est chargé par AdminDashboard.aspx (page-specific) --%>
+            </Scripts>
+        </asp:ScriptManager>
+
+        <!-- Implémentation inline de showNotification (remplace site-notifications.js tant que le 404 n'est pas résolu) -->
+        <script type="text/javascript">
+            (function () {
+                if (typeof window.showNotification !== 'function') {
+                    window.showNotification = function (message, type) {
+                        try {
+                            type = type || 'info';
+                            var colors = {
+                                success: '#10b981',
+                                error: '#ef4444',
+                                info: '#3b82f6'
+                            };
+                            var bg = colors[type] || colors.info;
+                            var el = document.createElement('div');
+                            el.textContent = message || '';
+                            el.style.position = 'fixed';
+                            el.style.right = '20px';
+                            el.style.top = '20px';
+                            el.style.zIndex = 99999;
+                            el.style.background = bg;
+                            el.style.color = '#fff';
+                            el.style.padding = '10px 14px';
+                            el.style.borderRadius = '8px';
+                            el.style.boxShadow = '0 6px 18px rgba(0,0,0,0.12)';
+                            el.style.fontFamily = 'Segoe UI, Roboto, Arial, sans-serif';
+                            el.style.fontSize = '14px';
+                            document.body.appendChild(el);
+                            setTimeout(function () { el.style.transition = 'opacity 250ms'; el.style.opacity = '0'; }, 2200);
+                            setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 2500);
+                        } catch (e) {
+                            try { console.warn('showNotification fallback', e); } catch (_) { }
+                        }
+                    };
+                }
+            })();
+        </script>
+
+        <asp:ContentPlaceHolder ID="MainContent" runat="server">
+        </asp:ContentPlaceHolder>
+
+        <!-- ============================================
+             PREMIUM FOOTER
+             ============================================ -->
+        <footer class="bg-dark text-white pt-5 pb-3 mt-5" style="background: linear-gradient(180deg, #1f422b 0%, #152e1e 100%); border-top: 4px solid #E8967D;">
+            <div class="container">
+                <div class="row g-4">
+                    <!-- Column 1: About -->
+                    <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+                        <div class="d-flex align-items-center mb-4">
+                             <div class="rounded-circle bg-white d-flex align-items-center justify-content-center me-2" style="width: 40px; height: 40px;">
+                                <i class="fas fa-leaf text-success fs-5"></i>
+                            </div>
+                            <h5 class="text-uppercase mb-0 fw-bold text-light">Coopérative</h5>
+                        </div>
+                        <p class="small text-white-50">
+                            Nous valorisons les produits de notre terroir avec passion et engagement durable. Découvrez une qualité authentique directement du producteur au consommateur.
+                        </p>
+                        <div class="mt-4">
+                            <a href="#" class="btn btn-outline-light btn-sm btn-floating m-1 rounded-circle" style="width: 35px; height: 35px; line-height: 22px;"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="btn btn-outline-light btn-sm btn-floating m-1 rounded-circle" style="width: 35px; height: 35px; line-height: 22px;"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="btn btn-outline-light btn-sm btn-floating m-1 rounded-circle" style="width: 35px; height: 35px; line-height: 22px;"><i class="fab fa-instagram"></i></a>
+                            <a href="#" class="btn btn-outline-light btn-sm btn-floating m-1 rounded-circle" style="width: 35px; height: 35px; line-height: 22px;"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: Quick Links -->
+                    <div class="col-lg-2 col-md-6 mb-4 mb-md-0">
+                        <h6 class="text-uppercase fw-bold mb-4 text-warning">Liens Rapides</h6>
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2"><a href="Default.aspx" class="text-white-50 text-decoration-none hover-text-white transition-all">Accueil</a></li>
+                            <li class="mb-2"><a href="Products.aspx" class="text-white-50 text-decoration-none hover-text-white transition-all">Nos Produits</a></li>
+                            <li class="mb-2"><a href="About.aspx" class="text-white-50 text-decoration-none hover-text-white transition-all">À Propos</a></li>
+                            <li class="mb-2"><a href="Contact.aspx" class="text-white-50 text-decoration-none hover-text-white transition-all">Contact</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Column 3: Contact Info -->
+                    <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                        <h6 class="text-uppercase fw-bold mb-4 text-warning">Nous Contacter</h6>
+                        <ul class="list-unstyled mb-0 small text-white-50">
+                            <li class="mb-3 d-flex align-items-start">
+                                <i class="fas fa-map-marker-alt me-3 mt-1 text-warning"></i>
+                                <span>123 Route des Arganiers,<br>Agadir, Maroc</span>
+                            </li>
+                            <li class="mb-3 d-flex align-items-center">
+                                <i class="fas fa-envelope me-3 text-warning"></i>
+                                <a href="mailto:contact@cooperative.com" class="text-white-50 text-decoration-none">contact@cooperative.com</a>
+                            </li>
+                            <li class="mb-3 d-flex align-items-center">
+                                <i class="fas fa-phone me-3 text-warning"></i>
+                                <span>+212 5 28 00 00 00</span>
+                            </li>
+                            <li class="d-flex align-items-center">
+                                <i class="fas fa-clock me-3 text-warning"></i>
+                                <span>Lun - Sam: 9h00 - 18h00</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Column 4: Newsletter -->
+                    <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                        <h6 class="text-uppercase fw-bold mb-4 text-warning">Newsletter</h6>
+                        <p class="small text-white-50 mb-3">Abonnez-vous pour recevoir nos dernières offres et actualités.</p>
+                        <div class="input-group mb-3">
+                            <input type="email" class="form-control form-control-sm bg-transparent text-white border-secondary" placeholder="Votre email" aria-label="Votre email">
+                            <button class="btn btn-warning btn-sm text-dark fw-bold" type="button">OK</button>
+                        </div>
+                        <p class="extra-small text-white-50 opacity-50" style="font-size: 0.75rem;">*Votre email sera utilisé uniquement pour nos communications.</p>
+                    </div>
+                </div>
+
+                <hr class="my-4 border-secondary opacity-25">
+
+                <!-- Copyright -->
+                <div class="row align-items-center">
+                    <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                        <p class="small text-white-50 mb-0">
+                            © <%: DateTime.Now.Year %> <strong class="text-white">Multi Coopérative</strong>. Tous droits réservés.
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-center text-md-end">
+                        <a href="#" class="text-white-50 text-decoration-none small me-3 hover-text-white">Mentions Légales</a>
+                        <a href="#" class="text-white-50 text-decoration-none small hover-text-white">Confidentialité</a>
+                    </div>
+                </div>
+            </div>
+            
+            <style>
+                .hover-text-white:hover { color: #fff !important; padding-left: 5px; }
+                .transition-all { transition: all 0.3s ease; }
+            </style>
+        </footer>
+
+        <!-- Back to Top Button -->
+        <button type="button" id="backToTop" class="btn-premium btn-premium-accent glass-effect" style="position: fixed; bottom: 30px; right: 30px; z-index: 999; display: none; width: 50px; height: 50px; border-radius: 50%; padding: 0;">
+            <i class="fas fa-chevron-up"></i>
+        </button>
+
+        <script>
+            window.addEventListener('scroll', function() {
+                var btn = document.getElementById('backToTop');
+                if (window.pageYOffset > 300) {
+                    btn.style.display = 'flex';
+                } else {
+                    btn.style.display = 'none';
+                }
+            });
+            document.getElementById('backToTop').addEventListener('click', function() {
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            });
+        </script>
+
+    </form>
+
+    <!-- 🤖 Chatbot Widget Flottant (Hors du formulaire pour éviter les conflits) -->
+    <div id="chatbot-widget">
+        <!-- Bouton Toggle (Icône flottante) -->
+        <button type="button" id="chatbot-toggle" title="Ouvrir l'assistant virtuel">
+            <i class="fas fa-comments"></i>
+        </button>
+
+        <!-- Fenêtre de Chat -->
+        <div id="chatbot-window">
+            <!-- En-tête -->
+            <div id="chatbot-header">
+                <div id="chatbot-header-info">
+                    <div id="chatbot-header-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div id="chatbot-header-text">
+                        <h3>Assistant Virtuel</h3>
+                        <p>En ligne • Réponse rapide</p>
+                    </div>
+                </div>
+                <div id="chatbot-header-actions">
+                    <button type="button" id="chatbot-minimize" title="Réduire">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button type="button" id="chatbot-close" title="Fermer">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Corps (Messages) -->
+            <div id="chatbot-body">
+                <div id="chatbot-messages">
+                    <!-- Les messages seront ajoutés ici dynamiquement -->
+                </div>
+            </div>
+
+            <!-- Pied de page (Input) -->
+            <div id="chatbot-footer">
+                <div id="chatbot-input-container">
+                    <input type="text" id="chatbot-input" placeholder="Posez votre question..." autocomplete="off" />
+                    <button type="button" id="chatbot-send" title="Envoyer">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <asp:PlaceHolder runat="server">
+        <%: Scripts.Render("~/Scripts/bootstrap.js") %>
+        <script src='<%= ResolveUrl("~/Scripts/chatbot-widget.js") %>'></script>
+    </asp:PlaceHolder>
+</body>
+</html>
